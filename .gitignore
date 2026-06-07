@@ -1,0 +1,17 @@
+# DBファイル本体はGitHub Releasesで配布(100MB制限のため)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+
+# ビルド成果物・ログ
+output/
+logs/
+__pycache__/
+*.pyc
+
+# 生成スクリプトは非公開(ローカルにのみ保持)
+scripts/
+
+# OS
+.DS_Store
