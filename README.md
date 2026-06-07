@@ -16,6 +16,7 @@
 - アプリ: 日本道路名マップ(App Store リンクは公開後にここへ追加)<!-- TODO: アプリのリンク -->
 - ライセンス全文: [LICENSE](LICENSE)
 - スキーマ詳細: [SCHEMA.md](SCHEMA.md)
+- アプリの[プライバシーポリシー](PRIVACY.md)
 
 ## データのダウンロード
 
