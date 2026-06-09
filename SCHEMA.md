@@ -43,6 +43,8 @@ roads.db / intersections.db (SQLite 3) の全テーブル・全列の定義。
 | wikidata | TEXT | 道路固有の Wikidata QID(例: Q11579612)。wikipedia が空の場合の sitelink 解決用 |
 | feature_type | TEXT | 道路種別。NULL = 通常道路。構造系: `bridge` / `tunnel` / `slope` / `footbridge` / `ped_bridge` / `overpass` / `underpass` / `steps` / `level_crossing` / `roundabout`。非自動車系: `cycleway` / `greenway` / `promenade` / `pedestrian`。別枠系(デフォルト非表示推奨): `private_road`(私道・車道系) / `passage`(自由通路・連絡通路等・歩行者系) |
 | highway_part | TEXT | 高速(is_highway=1)の本線/付帯区別。NULL = 本線。`ramp`(出入口・ランプ・連結路) / `ic_jct`(IC・JCT) / `pa_sa`(PA・SA) / `tollgate`(料金所)。一般道は常に NULL |
+| expressway_class | TEXT | 高速道路の 3 分類。`national`(高速自動車国道) / `urban`(都市高速) / `motorway_road`(その他の自動車専用道路)。高速以外は NULL |
+| corridor_id | INTEGER | 連結成分(回廊)の代表 road_id。**現在は未使用(全行 NULL)**。road_corridor_overview と対になる予約列 |
 
 インデックス: `idx_roads_name(normalized_name)`, `idx_roads_priority(priority)`,
 `idx_roads_class(road_class)`, `idx_roads_rel(relation_id)`
@@ -85,7 +87,7 @@ roads.db / intersections.db (SQLite 3) の全テーブル・全列の定義。
 | road_id | INTEGER | roads.road_id |
 | ref | TEXT | 番号(例: "20", "317", "E4") |
 | ref_label | TEXT | 表示ラベル(例: "国道20号", "東京都道317号") |
-| ref_type | TEXT | `national` / `prefectural` / `expressway` / `unknown` |
+| ref_type | TEXT | `national`(国道) / `prefectural`(都道府県道) / `expressway`(高速の路線番号。E1・C1・C2・B 等) / `unknown` |
 
 ### road_admins — 通過行政区域
 
@@ -121,11 +123,28 @@ roads.db / intersections.db (SQLite 3) の全テーブル・全列の定義。
 | 列 | 型 | 説明 |
 |---|---|---|
 | road_id | INTEGER | roads.road_id |
-| level | TEXT | `fine`(表示スパン 0.5〜2°向け、Douglas-Peucker 許容 0.001度) / `coarse`(スパン 2°超向け、同 0.0025度) |
+| level | TEXT | `fine`(表示スパン 0.5〜2°向け、Douglas-Peucker 許容 0.001度) / `coarse`(スパン 2°超向け、同 0.0012度) |
+| highway_kind | TEXT | `motorway`(自動車専用: motorway / motorway_link 区間) / `general`(それ以外: trunk / primary 等の区間)。同一道路を種別ごとに分けて簡略化する |
 | geometry_blob | BLOB | Float32 (lat, lon) ペア列。複数折れ線は NaN ペア区切り |
 | point_count | INTEGER | 実頂点数合計(NaN 区切りを含まない) |
 
-主キー: `(road_id, level)`
+主キー: `(road_id, level, highway_kind)`
+
+### road_corridor_overview — 回廊単位の簡略化ジオメトリ(廃止・残置)
+
+将来用に設計された連結成分(回廊)単位の簡略化ジオメトリテーブルですが、
+**現在は廃止済みで空(0 行)**です。スキーマ互換のため残置しています。
+roads.corridor_id と同様、現行ビルドでは生成されません。
+
+| 列 | 型 | 説明 |
+|---|---|---|
+| corridor_id | INTEGER | 連結成分の代表 road_id(roads.corridor_id と対応) |
+| level | TEXT | `fine` / `coarse`(road_overview と同基準) |
+| geometry_blob | BLOB | Float32 (lat, lon) ペア列。複数折れ線は NaN ペア区切り |
+| point_count | INTEGER | 実頂点数合計(NaN 区切りを含まない) |
+| priority | INTEGER | 構成 road の priority 最大値 |
+
+主キー: `(corridor_id, level)`
 
 ### roads_rtree / segments_rtree — 空間インデックス
 
