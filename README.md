@@ -13,7 +13,7 @@
 > Contains information from OpenStreetMap, which is made available
 > under the Open Database License (ODbL).
 
-- アプリ: 日本道路名マップ(App Store リンクは公開後にここへ追加)<!-- TODO: アプリのリンク -->
+- アプリ: [日本道路名マップ](https://apps.apple.com/app/id6778651837)
 - ライセンス全文: [LICENSE](LICENSE)
 - スキーマ詳細: [SCHEMA.md](SCHEMA.md)
 - アプリの[プライバシーポリシー](PRIVACY.md)・[サポート](SUPPORT.md)
